@@ -60,7 +60,11 @@ if (BIICODE)
     option ( LUA_BUILD_WLUA "Build wLua interpretter without console output." ON )
     
     # Nous Xiong set win dll or lib
-    option ( LUA_BUILD_AS_DLL "Build Lua library as Dll." NOT ${LUA_ENABLE_STATIC} )
+    if (LUA_ENABLE_STATIC)
+      option ( LUA_BUILD_AS_DLL "Build Lua library as Dll." OFF )
+    else ()
+      option ( LUA_BUILD_AS_DLL "Build Lua library as Dll." ON )
+    endif ()
 
     # Paths (Double escapes needed)
     set ( LUA_DIRSEP "\\\\" ) 
@@ -154,6 +158,7 @@ if (BIICODE)
   # Nous Xiong: set lib and exe src
   set (BII_LIB_SRC ${SRC_LIB} ${LUA_DLL_RC} ${LUA_DEF})
   set (BII_src_lua_SRC ${SRC_LUA} ${LUA_RC})
+  set (BII_src_luac_SRC ${SRC_LUAC} ${LUAC_RC})
   if (LUA_BUILD_WLUA)
     set (BII_src_wmain_SRC src/wmain.c ${SRC_LUA} ${LUA_RC})
     # Nous Xiong: manual adding src_wmain exe
@@ -162,11 +167,10 @@ if (BIICODE)
     list (REMOVE_ITEM BII_BLOCK_EXES 
       src_wmain
       )
-  set (BII_src_luac_SRC ${SRC_LUAC} ${LUAC_RC})
+  endif ()
   list (REMOVE_ITEM BII_BLOCK_EXES 
     etc_min
     )
-  endif ()
 
   # Actually create targets: EXEcutables and libraries.
   ADD_BIICODE_TARGETS()
@@ -187,7 +191,7 @@ if (BIICODE)
   
   ## BUILD
   # Nous Xiong: Create library
-  if (LIBS AND ${BII_LIB_TYPE} STREQUAL "SHARED")
+  if (LIBS)
     target_link_libraries ( ${BII_LIB_TARGET} PUBLIC ${LIBS} )
   endif ()
   set_target_properties ( ${BII_LIB_TARGET} PROPERTIES OUTPUT_NAME lua CLEAN_DIRECT_OUTPUT 1 )
@@ -200,9 +204,6 @@ if (BIICODE)
 
   # Nous Xiong: set lua exe
   target_link_libraries ( ${BII_src_lua_TARGET} PUBLIC ${BII_LIB_TARGET} )
-  if (LIBS)
-    target_link_libraries ( ${BII_src_lua_TARGET} PUBLIC ${LIBS} )
-  endif ()
 
   # On windows a variant of the lua interpreter without console output needs to be built
   if ( LUA_BUILD_WLUA )
@@ -212,18 +213,6 @@ if (BIICODE)
 
   # Nous Xiong: set luac exe
   target_link_libraries ( ${BII_src_luac_TARGET} liblua_static )
-  if (LIBS)
-    target_link_libraries ( ${BII_src_luac_TARGET} PUBLIC ${LIBS} )
-  endif ()
-
-  #install_executable ( lua luac )
-  #install_library ( liblua )
-  #install_data ( README.md COPYRIGHT HISTORY )
-  #install_lua_module ( strict etc/strict.lua )
-  #install_header ( src/lua.h src/lualib.h src/lauxlib.h etc/lua.hpp ${CMAKE_CURRENT_BINARY_DIR}/luaconf.h )
-  #install_doc ( doc/ )
-  #install_foo ( etc/ )
-  #install_test ( test/ )
   
 else ()
   include (CMakeLists_original.txt)
