@@ -1,6 +1,5 @@
+Forked from https://github.com/LuaDist/lua (lua-5.3 branch) .
 
-This is Lua 5.3.0 (work2), released on 21 Mar 2014.
+The biicode block "https://www.biicode.com/nousxiong/lua(5.3)" has been generated from the forked github repo: "https://github.com/nousxiong/lua".
 
-For installation instructions, license details, and
-further information about Lua, see doc/readme.html.
-
+It includes slight modifications added to the original repository (https://github.com/LuaDist/lua) in order to work properly with biicode. 
